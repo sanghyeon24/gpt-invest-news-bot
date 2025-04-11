@@ -1,26 +1,14 @@
-
 import os
-import openai
-from flask import Flask, request, jsonify
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-app = Flask(__name__)
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-@app.route("/", methods=["POST"])
-def chat():
-    user_input = request.json.get("message", "")
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_input}]
-        )
-        return jsonify({"response": response.choices[0].message["content"]})
-    except Exception as e:
-        return jsonify({"error": str(e)})
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("안녕하세요! 투자 비서 GPT입니다.")
 
-@app.route("/", methods=["GET"])
-def home():
-    return "GPT Invest News Bot is running."
+app = ApplicationBuilder().token(TOKEN).build()
+app.add_handler(CommandHandler("start", start))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run_polling()

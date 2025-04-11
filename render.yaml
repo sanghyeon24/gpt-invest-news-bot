@@ -1,8 +1,6 @@
-
 services:
   - type: web
     name: gpt-invest-news-bot
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python app.py"
-    autoDeploy: true
